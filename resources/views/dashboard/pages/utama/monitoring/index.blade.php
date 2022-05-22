@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    SPP TU
+    Monitoring
 @endsection
 
 @push('style')
@@ -24,7 +24,7 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP TU</a>
+            <a href="#">Monitoring</a>
         </li>
     </ul>
 @endsection
@@ -35,13 +35,13 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-head-row">
-                        <div class="card-title">Data SPP TU</div>
+                        <div class="card-title">Data Monitoring</div>
                         <div class="card-tools">
                             @component('dashboard.components.buttons.add',
                                 [
                                     'id' => 'btn-tambah',
                                     'class' => '',
-                                    'url' => url('spp-tu/create'),
+                                    'url' => url('monitoring/create'),
                                 ])
                             @endcomponent
                         </div>
@@ -54,7 +54,7 @@
                                 @component('dashboard.components.dataTables.index',
                                     [
                                         'id' => 'table-data',
-                                        'th' => ['No', 'Nama', 'Jumlah Nominal', 'Verifikasi ASN Sub Bagian Keuangan', 'Verifikasi PPK', 'Riwayat', 'Aksi'],
+                                        'th' => ['No', 'Indikator', 'OPD', 'TW1', 'TW2', 'TW3', 'TW4', 'Status Verifikasi', 'Aksi'],
                                     ])
                                 @endcomponent
                             </div>
@@ -96,7 +96,7 @@
                 [10, 25, 50, "All"]
             ],
             ajax: {
-                url: "{{ url('spp-tu') }}",
+                url: "{{ url('monitoring') }}",
                 data: function(d) {
                     d.statusValidasi = $('#status-validasi').val();
                     d.kategori = $('#kategori').val();
@@ -111,31 +111,39 @@
                     searchable: false
                 },
                 {
-                    data: 'nama',
-                    name: 'nama',
+                    data: 'indikator',
+                    name: 'indikator',
                     className: 'text-center',
                 },
                 {
-                    data: 'jumlah_nominal',
-                    name: 'jumlah_nominal',
+                    data: 'opd',
+                    name: 'opd',
                     className: 'text-center',
                 },
                 {
-                    data: 'verifikasi_asn',
-                    name: 'verifikasi_asn',
+                    data: 'tw1',
+                    name: 'tw1',
                     className: 'text-center',
                 },
                 {
-                    data: 'verifikasi_ppk',
-                    name: 'verifikasi_ppk',
+                    data: 'tw2',
+                    name: 'tw2',
                     className: 'text-center',
                 },
                 {
-                    data: 'riwayat',
-                    name: 'riwayat',
+                    data: 'tw3',
+                    name: 'tw3',
                     className: 'text-center',
-                    orderable: true,
-                    searchable: true
+                },
+                {
+                    data: 'tw4',
+                    name: 'tw4',
+                    className: 'text-center',
+                },
+                {
+                    data: 'status_verifikasi',
+                    name: 'status_verifikasi',
+                    className: 'text-center',
                 },
                 {
                     data: 'action',
@@ -158,27 +166,7 @@
 
     <script>
         $(document).ready(function() {
-            $('#spp-tu').addClass('active');
+            $('#monitoring').addClass('active');
         })
-
-        function printErrorMsg(msg) {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').removeClass('d-none');
-                $('.' + key + '-error').text(value);
-            });
-        }
-
-        function resetError() {
-            resetErrorElement('nama');
-        }
-
-        function resetModal() {
-            resetError();
-            $('#form-tambah')[0].reset();
-        }
-
-        function resetErrorElement(key) {
-            $('.' + key + '-error').addClass('d-none');
-        }
     </script>
 @endpush

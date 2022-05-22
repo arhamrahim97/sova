@@ -3,8 +3,8 @@
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
             <ul class="nav nav-primary">
-                <li class="nav-item">
-                    <a href="calendar.html">
+                <li class="nav-item" id="dashboard">
+                    <a href="{{ url('/dashboard') }}">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
@@ -15,10 +15,10 @@
                     </span>
                     <h4 class="text-section">Data</h4>
                 </li>
-                <li class="nav-item" id="data-1">
-                    <a href="{{ url('') }}">
+                <li class="nav-item" id="monitoring">
+                    <a href="{{ url('/monitoring') }}">
                         <i class="fas fa-file"></i>
-                        <p>Data 1</p>
+                        <p>Monitoring</p>
                     </a>
                 </li>
                 <li class="nav-section">

@@ -41,8 +41,10 @@
                                                     src="{{ asset('assets/dashboard') }}/img/profil-empty.png"
                                                     alt="image profile" class="avatar-img rounded"></div>
                                             <div class="u-text">
-                                                <h4>User</h4>
-                                                <p class="text-muted">email@test.com</p>
+                                                <h4>
+                                                    {{ Auth::user()->role == 'Admin' ? 'Admin' : Auth::user()->opd->nama }}
+                                                </h4>
+                                                <p class="text-muted">{{ Auth::user()->email }}</p>
                                             </div>
                                         </div>
                                     </li>

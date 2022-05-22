@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    SPP TU
+    Monitoring
 @endsection
 
 @push('style')
@@ -69,46 +69,84 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP TU</a>
+            <a href="#">Monitoring</a>
         </li>
     </ul>
 @endsection
 
 @section('content')
-    <form method="POST" id="form-tambah" enctype="multipart/form-data" action="{{ url('spp-tu') }}">
+    <form method="POST" id="form-tambah" enctype="multipart/form-data" action="{{ url('monitoring') }}">
         {{ csrf_field() }}
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-head-row">
-                            <div class="card-title">Tambah SPP TU</div>
+                            <div class="card-title">Tambah Monitoring</div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-5">
-                                <div class="card card-profile">
-                                    <div class="card-header">
-                                        <div class="profile-picture">
-                                            <div class="avatar avatar-xl">
-                                                <img src="{{ Storage::url('profil/' . Auth::user()->profil->foto) }}"
-                                                    alt="..." class="avatar-img rounded-circle">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="user-profile text-center">
-                                            <div class="name">{{ Auth::user()->profil->nama }}</div>
-                                            <div class="job">{{ Auth::user()->profil->biroOrganisasi->nama }}
-                                            </div>
-                                            <div class="job">{{ Auth::user()->email }}</div>
+                            <div class="col-md-7">
+                                <div class="col-lg-12 mb-3">
+                                    <label for="TextInput" class="form-label my-2">Indikator</label>
+                                    <br>
+                                    <label for="TextInput"
+                                        class="form-label my-2 fw-bold">{{ $monitoring->indikator->nama }}</label>
+                                </div>
+                                <div class="col-lg-12">
+                                    @component('dashboard.components.formElements.ckEditor',
+                                        [
+                                            'label' => 'Deskripsi',
+                                            'id' => 'deskripsi',
+                                            'name' => 'deskripsi',
+                                            'class' => 'ckeditor',
+                                            'wajib' => '<sup class="text-danger">*</sup>',
+                                        ])
+                                    @endcomponent
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Wilayah</label>
+                                        <br>
+                                        <span class="text-danger error-text wilayah-error"></span>
+                                        <div class="selectgroup selectgroup-pills">
+                                            @foreach ($desaKelurahan as $item)
+                                                @php
+                                                    $checked = '';
+                                                    $disabled = '';
+                                                    $name = 'wilayah[]';
+                                                    $wilayahMonitoring = \App\Models\WilayahMonitoring::where('monitoring_id', $monitoring->id)
+                                                        ->where('desa_kelurahan_id', $item->id)
+                                                        ->where('tw', '!=', $tw)
+                                                        ->first();
+
+                                                    if ($wilayahMonitoring) {
+                                                        $checked = 'checked';
+                                                        $disabled = 'disabled';
+                                                        $name = '';
+                                                    }
+                                                @endphp
+                                                <label class="selectgroup-item">
+                                                    <input type="checkbox" name="{{ $name }}"
+                                                        value="{{ $item->id }}" class="selectgroup-input"
+                                                        {{ $checked }} {{ $disabled }}>
+                                                    <span class="selectgroup-button">{{ $item->nama }}</span>
+                                                </label>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-7">
-                                <div class="card" id="card-keterangan-upload">
+                            <div class="col-md-5">
+                                @if (Auth::user()->role == 'Admin')
+                                    <label for="TextInput" class="form-label my-2">OPD</label>
+                                    <br>
+                                    <label for="TextInput"
+                                        class="form-label my-2 fw-bold">{{ $monitoring->opd->nama }}</label>
+                                @endif
+
+                                <div class="card mt-4" id="card-keterangan-upload">
                                     <div class="card-body text-center">
                                         <i class="fas fa-file-upload" style="font-size: 75px"></i>
                                         <p class="my-0">Upload Dokumen</p>
@@ -119,61 +157,33 @@
                                     </div>
                                 </div>
                                 <div id="list-upload">
-                                    <div class="card box-upload" class="box-upload">
+                                    <div class="card box-upload" id="box-upload-1" class="box-upload">
                                         <div class="card-body">
                                             <div class="row">
-                                                <div class="form-group col-lg-12">
-                                                    <label for="exampleFormControlInput1">Nama Kegiatan</label>
-                                                    <input type="text" name="nama_kegiatan" class="form-control"
-                                                        id="exampleFormControlInput1" placeholder="Masukkan Nama Kegiatan">
-                                                    <p class="text-danger error-text nama_kegiatan-error my-0"></p>
+                                                <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
+                                                <div class="col-3 d-flex align-items-center justify-content-center">
+                                                    <img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt=""
+                                                        width="70px">
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card box-upload" class="box-upload">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="form-group col-lg-12">
-                                                    <label for="exampleFormControlInput1">Jumlah Nominal</label>
-                                                    <input type="text" name="jumlah_nominal" class="form-control uang"
-                                                        id="exampleFormControlInput1" placeholder="Masukkan Jumlah Nominal">
-                                                    <p class="text-danger error-text jumlah_nominal-error my-0"></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @foreach ($daftarDokumenSppTu as $dokumen)
-                                        <div class="card box-upload" id="box-upload-{{ $loop->iteration }}"
-                                            class="box-upload">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
-                                                    <div class="col-3 d-flex align-items-center justify-content-center">
-                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt=""
-                                                            width="70px">
+                                                <div class="col-9">
+                                                    <div class="mb-3 mt-2">
+                                                        <input type="text" class="form-control nama_file" id="nama_file"
+                                                            name="nama_file[]" placeholder="Masukkan Nama File" value="">
                                                     </div>
-                                                    <div class="col-9">
-                                                        <div class="mb-3 mt-2">
-                                                            <input type="text" class="form-control nama_file" id="nama_file"
-                                                                name="nama_file[]" placeholder="Masukkan Nama File"
-                                                                value="{{ $dokumen->nama }}">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <input name="file_dokumen[]" class="form-control file_dokumen"
-                                                                type="file" multiple="true">
-                                                            <p class="text-danger error-text nama_file-error my-0"></p>
-                                                            <p class="text-danger error-text file_dokumen-error my-0"></p>
-                                                        </div>
+                                                    <div class="mb-3">
+                                                        <input name="file_dokumen[]" class="form-control file_dokumen"
+                                                            type="file" multiple="true">
+                                                        <p class="text-danger error-text nama_file-error my-0"></p>
+                                                        <p class="text-danger error-text file_dokumen-error my-0"></p>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button type="button"
-                                                class="btn btn-danger fw-bold card-footer bg-danger text-center p-0"
-                                                onclick="hapus({{ $loop->iteration }})"><i class="fas fa-trash-alt"></i>
-                                                Hapus</button>
                                         </div>
-                                    @endforeach
+                                        <button type="button"
+                                            class="btn btn-danger fw-bold card-footer bg-danger text-center p-0"
+                                            onclick="hapus(1)"><i class="fas fa-trash-alt"></i>
+                                            Hapus</button>
+                                    </div>
                                 </div>
 
                                 <div class="card bg-primary" id="card-tambah">
@@ -198,10 +208,11 @@
 
 @push('script')
     <script>
-        var totalList = {{ count($daftarDokumenSppTu) }};
+        var totalList = 1;
+        var monitoring_id = "{{ $monitoring->id }}";
 
         $(document).ready(function() {
-            $('#spp-tu').addClass('active');
+            $('#monitoring').addClass('active');
         })
 
         function hapus(id) {
@@ -222,6 +233,9 @@
 
         $('#form-tambah').submit(function(e) {
             e.preventDefault();
+            resetError();
+            submitCkEditor();
+
             var totalDokumenKosong = 0;
             var totalNamaKosong = 0;
             var indexArray = 0;
@@ -233,6 +247,15 @@
             $(".nama_file-error").each(function() {
                 $(this).html('');
             })
+
+            if ($('.file_dokumen').length == 0) {
+                swal("Dokumen harus ada minimal 1", {
+                    buttons: false,
+                    timer: 1500,
+                    icon: "warning",
+                });
+                return false;
+            }
 
             $(".file_dokumen").each(function() {
                 if ($(this).val() == '') {
@@ -258,12 +281,14 @@
             }
 
             var formData = new FormData($(this)[0]);
+            formData.append('monitoring_id', monitoring_id);
             $.ajax({
-                url: "{{ url('spp-tu') }}",
+                url: "{{ url('monitoring') }}",
                 type: "POST",
                 data: formData,
                 async: false,
                 success: function(response) {
+                    console.log(response);
                     if (response.status == "success") {
                         swal("Berhasil",
                             "Dokumen berhasil ditambahkan", {
@@ -272,7 +297,7 @@
                             });
                         setTimeout(
                             function() {
-                                $(location).attr('href', "{{ url('spp-tu') }}");
+                                $(location).attr('href', "{{ url('monitoring') }}");
                             }, 2000);
                     } else {
                         printErrorMsg(response.error);
@@ -309,12 +334,21 @@
         }
 
         function resetError() {
-            resetErrorElement('nama');
+            $('.indikator-error').text('');
+            $('.opd-error').text('');
+            $('.deskripsi-error').text('');
+            $('.wilayah-error').text('');
         }
 
         function resetModal() {
             resetError();
             $('#form-tambah')[0].reset();
+        }
+
+        function submitCkEditor() {
+            for (var i in CKEDITOR.instances) {
+                CKEDITOR.instances[i].updateElement();
+            }
         }
 
         // function printErrorMsg(msg) {
