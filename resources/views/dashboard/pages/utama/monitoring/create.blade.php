@@ -7,10 +7,9 @@
 @push('style')
     <style>
         #nama_file {
-            border: 0px;
+            border: 1px solid grey;
             font-weight: bold;
             height: 23px;
-            padding-left: 5px;
             font-size: 15px;
         }
 
@@ -304,6 +303,13 @@
                     } else {
                         printErrorMsg(response.error);
                     }
+                },
+                error: function(response) {
+                    swal("Gagal", "Data Gagal Ditambahkan", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
                 },
                 cache: false,
                 contentType: false,

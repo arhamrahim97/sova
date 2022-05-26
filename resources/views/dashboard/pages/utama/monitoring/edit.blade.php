@@ -1,16 +1,15 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    SPP TU
+    Edit Monitoring
 @endsection
 
 @push('style')
     <style>
         #nama_file {
-            border: 0px;
+            border: 1px solid grey;
             font-weight: bold;
             height: 23px;
-            padding-left: 5px;
             font-size: 15px;
         }
 
@@ -63,13 +62,13 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP</a>
+            <a href="#">Monitoring</a>
         </li>
         <li class="separator">
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP TU</a>
+            <a href="#">Edit Monitoring</a>
         </li>
     </ul>
 @endsection
@@ -83,79 +82,99 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-head-row">
-                            <div class="card-title">Edit SPP TU</div>
+                            <div class="card-title">Edit Monitoring</div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-5">
-                                <div class="card card-profile">
-                                    <div class="card-header">
-                                        <div class="profile-picture">
-                                            <div class="avatar avatar-xl">
-                                                <img src="{{ Storage::url('profil/' . Auth::user()->profil->foto) }}"
-                                                    alt="..." class="avatar-img rounded-circle">
-                                            </div>
-                                        </div>
+                            <div class="col-md-7">
+                                <div class="col-lg-12">
+                                    <label for="TextInput" class="form-label my-2">Indikator</label>
+                                    <br>
+                                    <label for="TextInput"
+                                        class="form-label fw-bold">{{ $monitoring->indikator->nama }}</label>
+                                </div>
+                                @if (Auth::user()->role != 'Admin')
+                                    <div class="col-lg-12 mt-3">
+                                        <label for="TextInput" class="form-label my-2">OPD</label>
+                                        <br>
+                                        <label for="TextInput"
+                                            class="form-label fw-bold">{{ $monitoring->opd->nama }}</label>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="user-profile text-center">
-                                            <div class="name">{{ Auth::user()->profil->nama }}</div>
-                                            <div class="job">{{ Auth::user()->profil->biroOrganisasi->nama }}
-                                            </div>
-                                            <div class="job">{{ Auth::user()->email }}</div>
+                                @endif
+                                <div class="col-lg-12">
+                                    <label for="TextInput" class="form-label my-2">TW</label>
+                                    <br>
+                                    <label for="TextInput" class="form-label fw-bold">{{ $riwayatMonitoring->tw }}</label>
+                                </div>
+                                <div class="col-lg-12">
+                                    @component('dashboard.components.formElements.ckEditor',
+                                        [
+                                            'label' => 'Deskripsi',
+                                            'id' => 'deskripsi',
+                                            'name' => 'deskripsi',
+                                            'class' => 'ckeditor',
+                                            'value' => $riwayatMonitoring->deskripsi,
+                                            'wajib' => '<sup class="text-danger">*</sup>',
+                                        ])
+                                    @endcomponent
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Wilayah</label>
+                                        <br>
+                                        <span class="text-danger error-text wilayah-error"></span>
+                                        <div class="selectgroup selectgroup-pills">
+                                            @foreach ($desaKelurahan as $item)
+                                                @php
+                                                    $checked = '';
+                                                    $disabled = '';
+                                                    $selectGroupButton = '';
+                                                    $name = 'wilayah[]';
+                                                    $wilayahMonitoring = \App\Models\WilayahMonitoring::where('monitoring_id', $monitoring->id)
+                                                        ->where('desa_kelurahan_id', $item->id)
+                                                        ->where('tw', '!=', $riwayatMonitoring->tw)
+                                                        ->first();
+
+                                                    if ($wilayahMonitoring) {
+                                                        $checked = 'checked';
+                                                        $disabled = 'disabled';
+                                                        $name = '';
+                                                        $selectGroupButton = 'bg-success text-light border-success';
+                                                    } else {
+                                                        $wilayahMonitoring = \App\Models\WilayahMonitoring::where('monitoring_id', $monitoring->id)
+                                                            ->where('desa_kelurahan_id', $item->id)
+                                                            // ->where('tw', '==', $riwayatMonitoring->tw)
+                                                            ->whereIn('id', $wilayahMonitoringId)
+                                                            ->first();
+                                                        if ($wilayahMonitoring) {
+                                                            $checked = 'checked';
+                                                            $disabled = '';
+                                                        }
+                                                    }
+                                                @endphp
+                                                <label class="selectgroup-item">
+                                                    <input type="checkbox" name="{{ $name }}"
+                                                        value="{{ $item->id }}" class="selectgroup-input"
+                                                        {{ $checked }} {{ $disabled }}>
+                                                    <span
+                                                        class="selectgroup-button {{ $selectGroupButton }}">{{ $item->nama }}</span>
+                                                </label>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-7">
-                                @if ($request->perbaiki == 'asn' && $sppTu->alasan_validasi_asn != null)
+                            <div class="col-md-5">
+                                @if ($riwayatMonitoring->is_valid == 2)
                                     @component('dashboard.components.widgets.alert',
                                         [
                                             'classBg' => 'bg-danger text-light',
                                             'judul' => 'Alasan Ditolak',
-                                            'isi' => $sppTu->alasan_validasi_asn,
+                                            'isi' => $riwayatMonitoring->alasan,
                                         ])
                                     @endcomponent
                                 @endif
-
-                                @if ($request->perbaiki == 'ppk' && $sppTu->alasan_validasi_ppk != null)
-                                    @component('dashboard.components.widgets.alert',
-                                        [
-                                            'classBg' => 'bg-danger text-light',
-                                            'judul' => 'Alasan Ditolak',
-                                            'isi' => $sppTu->alasan_validasi_ppk,
-                                        ])
-                                    @endcomponent
-                                @endif
-
-                                <div class="card box-upload" class="box-upload">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="form-group col-lg-12">
-                                                <label for="exampleFormControlInput1">Nama Kegiatan</label>
-                                                <input type="text" name="nama_kegiatan" class="form-control"
-                                                    id="exampleFormControlInput1" placeholder="Masukkan Nama Kegiatan"
-                                                    value="{{ $sppTu->nama }}">
-                                                <p class="text-danger error-text nama_kegiatan-error my-0"></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="card box-upload" class="box-upload">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="form-group col-lg-12">
-                                                <label for="exampleFormControlInput1">Jumlah Nominal</label>
-                                                <input type="text" name="jumlah_nominal" class="form-control uang"
-                                                    id="exampleFormControlInput1" placeholder="Masukkan Jumlah Nominal"
-                                                    value="{{ $sppTu->jumlah_nominal }}">
-                                                <p class="text-danger error-text jumlah_nominal-error my-0"></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div class="card" id="card-keterangan-upload">
                                     <div class="card-body text-center">
@@ -168,31 +187,8 @@
                                     </div>
                                 </div>
                                 <div id="list-upload">
-                                    <div class="card box-upload" class="box-upload">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
-                                                <div class="col-3 d-flex align-items-center justify-content-center">
-                                                    <img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt=""
-                                                        width="70px">
-                                                </div>
-                                                <div class="col-9">
-                                                    <div class="mb-3 mt-2">
-                                                        <p class="fw-bold" style="font-size: 15px;">Surat Penolakan
-                                                        </p>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <input name="surat_penolakan" class="form-control" type="file"
-                                                            multiple="true">
-                                                        <p class="text-danger error-text surat_penolakan-error my-0">
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <hr>
-                                    @foreach ($sppTu->dokumenSppTu as $dokumen)
+                                    @foreach ($riwayatMonitoring->dokumen as $dokumen)
                                         <div class="card box-upload" id="box-upload-{{ $loop->iteration }}"
                                             class="box-upload">
                                             <div class="card-body">
@@ -256,14 +252,13 @@
 
 @push('script')
     <script>
-        var totalList = {{ count($sppTu->dokumenSppTu) }};
-        var arrayNamaFileUpdate = {{ json_encode($sppTu->dokumenSppTu->pluck('id')->toArray()) }};
-        var perbaiki = "{{ $request->perbaiki }}";
+        var totalList = {{ count($riwayatMonitoring->dokumen) }};
+        var arrayNamaFileUpdate = {{ json_encode($riwayatMonitoring->dokumen->pluck('id')->toArray()) }};
         var arrayDokumenHapus = [];
         var arrayDokumenUpdate = [];
 
         $(document).ready(function() {
-            $('#spp-tu').addClass('active');
+            $('#monitoring').addClass('active');
         })
 
         function hapus(id) {
@@ -297,6 +292,7 @@
             var totalNamaKosong = 0;
             var indexArray = 0;
             arrayDokumenUpdate = [];
+            submitCkEditor();
 
             $('.surat-penolakan_error').html('');
 
@@ -349,23 +345,21 @@
             formData.append('arrayNamaFileUpdate', JSON.stringify(arrayNamaFileUpdate));
             formData.append('arrayDokumenHapus', JSON.stringify(arrayDokumenHapus));
             formData.append('arrayDokumenUpdate', JSON.stringify(arrayDokumenUpdate));
-            formData.append('perbaiki', perbaiki);
             $.ajax({
-                url: "{{ url('spp-tu/' . $sppTu->id) }}",
+                url: "{{ url('monitoring/' . $riwayatMonitoring->id) }}",
                 type: "POST",
                 data: formData,
                 async: false,
                 success: function(response) {
-                    console.log(response);
                     if (response.status == "success") {
                         swal("Berhasil",
-                            "Dokumen berhasil ditambahkan", {
+                            "Dokumen berhasil diubah", {
                                 button: false,
                                 icon: "success",
                             });
                         setTimeout(
                             function() {
-                                $(location).attr('href', "{{ url('spp-tu') }}");
+                                $(location).attr('href', "{{ url('monitoring') }}");
                             }, 2000);
                     } else {
                         swal("Periksa Kembali Data Anda", {
@@ -375,6 +369,13 @@
                         });
                         printErrorMsg(response.error);
                     }
+                },
+                error: function(response) {
+                    swal("Gagal", "Data Gagal Diubah", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
                 },
                 cache: false,
                 contentType: false,
@@ -404,6 +405,12 @@
                     indexError++;
                 });
             });
+        }
+
+        function submitCkEditor() {
+            for (var i in CKEDITOR.instances) {
+                CKEDITOR.instances[i].updateElement();
+            }
         }
 
         function resetError() {

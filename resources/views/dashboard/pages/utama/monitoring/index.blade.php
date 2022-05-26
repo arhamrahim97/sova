@@ -5,6 +5,16 @@
 @endsection
 
 @push('style')
+    <style>
+        .btn-delete {
+            cursor: pointer;
+        }
+
+        .btn-upload {
+            cursor: pointer;
+        }
+
+    </style>
 @endpush
 
 @section('breadcrumb')
@@ -54,7 +64,7 @@
                                 @component('dashboard.components.dataTables.index',
                                     [
                                         'id' => 'table-data',
-                                        'th' => ['No', 'Indikator', 'OPD', 'TW1', 'TW2', 'TW3', 'TW4', 'Status Verifikasi', 'Aksi'],
+                                        'th' => ['No', 'Indikator', 'OPD', 'TW1', 'TW2', 'TW3', 'TW4', 'Aksi'],
                                     ])
                                 @endcomponent
                             </div>
@@ -68,6 +78,102 @@
 
 @push('script')
     <script>
+        $(document).on('click', '#btn-delete', function() {
+            let id = $(this).val();
+            swal({
+                title: 'Apakah Anda Yakin ?',
+                icon: 'error',
+                text: "Data yang sudah dihapus tidak dapat dikembalikan lagi !",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Hapus',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        text: 'Batal',
+                        className: 'btn btn-danger'
+                    }
+                }
+            }).then((Delete) => {
+                if (Delete) {
+                    $.ajax({
+                        url: "{{ url('monitoring') }}" + '/' + id,
+                        type: 'DELETE',
+                        data: {
+                            '_token': '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.status == 'success') {
+                                swal("Berhasil", "Data Berhasil Dihapus", {
+                                    icon: "success",
+                                    buttons: false,
+                                    timer: 1000,
+                                }).then(function() {
+                                    table.draw();
+                                })
+                            } else {
+                                swal("Gagal", "Data Gagal Dihapus", {
+                                    icon: "error",
+                                    buttons: false,
+                                    timer: 1000,
+                                });
+                            }
+                        }
+                    })
+                }
+            });
+        })
+
+        $(document).on('click', '#btn-delete-monitoring', function() {
+            let id = $(this).val();
+            swal({
+                title: 'Apakah Anda Yakin ?',
+                icon: 'error',
+                text: "Data yang sudah dihapus tidak dapat dikembalikan lagi !",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Hapus',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        text: 'Batal',
+                        className: 'btn btn-danger'
+                    }
+                }
+            }).then((Delete) => {
+                if (Delete) {
+                    $.ajax({
+                        url: "{{ url('monitoring/destroyMonitoring') }}" + '/' + id,
+                        type: 'DELETE',
+                        data: {
+                            '_token': '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.status == 'success') {
+                                swal("Berhasil", "Data Berhasil Dihapus", {
+                                    icon: "success",
+                                    buttons: false,
+                                    timer: 1000,
+                                }).then(function() {
+                                    table.draw();
+                                })
+                            } else {
+                                swal("Gagal", "Data Gagal Dihapus", {
+                                    icon: "error",
+                                    buttons: false,
+                                    timer: 1000,
+                                });
+                            }
+                        }
+                    })
+                }
+            });
+        })
+
         var table = $('#table-data').DataTable({
             processing: true,
             serverSide: true,
@@ -138,11 +244,6 @@
                 {
                     data: 'tw4',
                     name: 'tw4',
-                    className: 'text-center',
-                },
-                {
-                    data: 'status_verifikasi',
-                    name: 'status_verifikasi',
                     className: 'text-center',
                 },
                 {
