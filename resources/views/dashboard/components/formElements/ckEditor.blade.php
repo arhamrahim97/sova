@@ -1,6 +1,6 @@
 <label for="TextInput" class="form-label my-2">{{ $label }} {!! $wajib ?? '' !!}</label>
 <textarea name="{{ $name }}" class="deskripsi form-control {{ $class ?? '' }}" id="{{ $id }}"
-    cols="30" rows="10" {{ $attribute ?? '' }}></textarea>
+    cols="30" rows="10" {{ $attribute ?? '' }}>{!! $value ?? '' !!}</textarea>
 <span class="text-danger error-text {{ $name }}-error"></span>
 
 @push('script')

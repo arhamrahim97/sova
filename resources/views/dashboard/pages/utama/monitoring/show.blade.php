@@ -1,10 +1,17 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    SPP TU
+    Detail Monitoring
 @endsection
 
 @push('style')
+    <style>
+        img {
+            max-width: 100%;
+            height: auto !important;
+        }
+
+    </style>
 @endpush
 
 @section('breadcrumb')
@@ -18,13 +25,13 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP</a>
+            <a href="#">Monitoring</a>
         </li>
         <li class="separator">
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP TU</a>
+            <a href="#">Detail Monitoring</a>
         </li>
     </ul>
 @endsection
@@ -35,9 +42,11 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-head-row">
-                        <div class="card-title">Daftar Dokumen</div>
+                        <div class="card-title">
+                            Detail Indikator
+                        </div>
                         <div class="card-tools">
-                            @if ((Auth::user()->role == 'PPK' || Auth::user()->role == 'ASN Sub Bagian Keuangan') && ($sppTu->status_validasi_asn == 0 || $sppTu->status_validasi_ppk == 0))
+                            @if (Auth::user()->role == 'Admin' && $riwayatMonitoring->is_valid == 0)
                                 @component('dashboard.components.buttons.verifikasi',
                                     [
                                         'id' => 'btn-verifikasi',
@@ -52,13 +61,49 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-12">
-
+                        <div class="col-lg-6">
+                            <div class="col-lg-12">
+                                <label for="TextInput" class="form-label my-2">Indikator</label>
+                                <br>
+                                <label for="TextInput"
+                                    class="form-label fw-bold">{{ $monitoring->indikator->nama }}</label>
+                            </div>
+                            <div class="col-lg-12 mt-3">
+                                <label for="TextInput" class="form-label my-2">OPD</label>
+                                <br>
+                                <label for="TextInput" class="form-label fw-bold">{{ $monitoring->opd->nama }}</label>
+                            </div>
+                            <div class="col-lg-12">
+                                <label for="TextInput" class="form-label my-2">TW</label>
+                                <br>
+                                <label for="TextInput" class="form-label fw-bold">{{ $riwayatMonitoring->tw }}</label>
+                            </div>
+                            <div class="col-lg-12 mt-3">
+                                <label for="TextInput" class="form-label my-2">Deskripsi</label>
+                                <br>
+                                {!! $riwayatMonitoring->deskripsi !!}
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="form-label">Wilayah</label>
+                                    <br>
+                                    <span class="text-danger error-text wilayah-error"></span>
+                                    <div class="selectgroup selectgroup-pills">
+                                        @foreach ($wilayahMonitoring as $item)
+                                            <label class="selectgroup-item">
+                                                <input type="checkbox" class="selectgroup-input" checked disabled>
+                                                <span class="selectgroup-button ">{{ $item->desaKelurahan->nama }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
                             @component('dashboard.components.widgets.listDokumen',
                                 [
-                                    'dokumenSpp' => $sppTu->dokumenSppTu,
-                                    'spp' => $sppTu,
-                                    'tipe' => $tipe,
+                                    'listDokumen' => $riwayatMonitoring->dokumen,
+                                    'riwayatMonitoring' => $riwayatMonitoring,
                                 ])
                             @endcomponent
                         </div>
@@ -97,7 +142,7 @@
             e.preventDefault();
             $.ajax({
                 type: 'PUT',
-                url: "{{ url('spp-tu/verifikasi/' . $sppTu->id) }}",
+                url: "{{ url('monitoring/verifikasi/' . $riwayatMonitoring->id) }}",
                 data: $(this).serialize(),
                 success: function(response) {
                     if (response.status == 'success') {
@@ -108,7 +153,7 @@
                             timer: 1000,
                         }).then(function() {
                             window.location.href =
-                                "{{ url('spp-tu') }}";
+                                "{{ url('monitoring') }}";
                         })
                     } else {
                         printErrorMsg(response.error);
@@ -137,7 +182,7 @@
         }
 
         $(document).ready(function() {
-            $('#spp-tu').addClass('active');
+            $('#monitoring').addClass('active');
         })
     </script>
 @endpush

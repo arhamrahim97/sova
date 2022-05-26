@@ -175,12 +175,13 @@
             }).then((Delete) => {
                 if (Delete) {
                     $.ajax({
-                        url: "{{ url('master-data/biro-organisasi') }}" + '/' + id,
+                        url: "{{ url('master-data/akun') }}" + '/' + id,
                         type: 'DELETE',
                         data: {
                             '_token': '{{ csrf_token() }}'
                         },
                         success: function(response) {
+                            console.log(response);
                             if (response.status == 'success') {
                                 swal("Berhasil", "Data Berhasil Dihapus", {
                                     icon: "success",

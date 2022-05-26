@@ -16,11 +16,14 @@ class CreateRiwayatMonitoringTable extends Migration
         Schema::create('riwayat_monitoring', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('monitoring_id');
-            $table->text('deskripsi');
+            $table->longText('deskripsi');
             $table->integer('tw');
             $table->integer('total_wilayah_monitoring');
             $table->integer('total_seluruh_desa');
             $table->double('persentase');
+            $table->integer('is_valid')->default(0);
+            $table->text('alasan')->nullable();
+            $table->dateTime('tanggal_verifikasi')->nullable();
             $table->timestamps();
         });
     }

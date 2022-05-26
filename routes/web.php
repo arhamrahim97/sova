@@ -27,6 +27,8 @@ Route::get('/', function () {
 });
 
 Route::group(['middleware' => 'auth'], function () {
+    Route::delete('/monitoring/destroyMonitoring/{id}', [MonitoringController::class, 'destroyMonitoring']);
+    Route::put('/monitoring/verifikasi/{id}', [MonitoringController::class, 'verifikasi']);
     Route::post('/monitoring/create', [MonitoringController::class, 'create']);
     Route::resource('/monitoring', MonitoringController::class);
     // Route::match(array('PUT', 'POST'), '/monitoring/create', [MonitoringController::class, 'create']);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DesaKelurahan;
 use App\Models\Kecamatan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -19,19 +20,23 @@ class DesaKelurahanController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = DesaKelurahan::orderBy('created_at', 'asc')->where('kecamatan_id', $request->kecamatan)->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $actionBtn = '<button id="btn-edit" class="btn btn-warning btn-sm mr-1" value="' . $row->id . '" ><i class="fas fa-edit"></i> Ubah</button><button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+        if (Auth::user()->role == 'Admin') {
+            if ($request->ajax()) {
+                $data = DesaKelurahan::orderBy('created_at', 'asc')->where('kecamatan_id', $request->kecamatan)->get();
+                return DataTables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('action', function ($row) {
+                        $actionBtn = '<button id="btn-edit" class="btn btn-warning btn-sm mr-1" value="' . $row->id . '" ><i class="fas fa-edit"></i> Ubah</button><button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
+                        return $actionBtn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+            }
+            $kecamatan = Kecamatan::find($request->kecamatan);
+            return view('dashboard.pages.masterData.wilayah.desaKelurahan.index', compact('kecamatan'));
+        } else {
+            return abort(403);
         }
-        $kecamatan = Kecamatan::find($request->kecamatan);
-        return view('dashboard.pages.masterData.wilayah.desaKelurahan.index', compact('kecamatan'));
     }
 
     /**

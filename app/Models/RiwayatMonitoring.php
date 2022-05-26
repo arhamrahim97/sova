@@ -12,4 +12,14 @@ class RiwayatMonitoring extends Model
     use TraitUuid;
 
     protected $table = 'riwayat_monitoring';
+
+    public function dokumen()
+    {
+        return $this->hasMany(DokumenMonitoring::class, 'riwayat_monitoring_id');
+    }
+
+    public function monitoring()
+    {
+        return $this->belongsTo(Monitoring::class, 'monitoring_id');
+    }
 }

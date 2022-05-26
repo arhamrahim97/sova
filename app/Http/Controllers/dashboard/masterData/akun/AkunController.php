@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Opd;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -19,31 +20,35 @@ class AkunController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = User::orderBy('id', 'desc')->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('email', function ($row) {
-                    return $row->email;
-                })
-                ->addColumn('role', function ($row) {
-                    return $row->role;
-                })
-                ->addColumn('opd', function ($row) {
-                    if ($row->role == 'Admin') {
-                        return '-';
-                    } else {
-                        return $row->opd->nama;
-                    }
-                })
-                ->addColumn('action', function ($row) {
-                    $actionBtn = '<button id="btn-edit" class="btn btn-warning btn-sm mr-1" value="' . $row->id . '" ><i class="fas fa-edit"></i> Ubah</button><button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action', 'opd'])
-                ->make(true);
+        if (Auth::user()->role == 'Admin') {
+            if ($request->ajax()) {
+                $data = User::orderBy('id', 'desc')->get();
+                return DataTables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('email', function ($row) {
+                        return $row->email;
+                    })
+                    ->addColumn('role', function ($row) {
+                        return $row->role;
+                    })
+                    ->addColumn('opd', function ($row) {
+                        if ($row->role == 'Admin') {
+                            return '-';
+                        } else {
+                            return $row->opd->nama;
+                        }
+                    })
+                    ->addColumn('action', function ($row) {
+                        $actionBtn = '<button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
+                        return $actionBtn;
+                    })
+                    ->rawColumns(['action', 'opd'])
+                    ->make(true);
+            }
+            return view('dashboard.pages.masterData.akun.index');
+        } else {
+            return abort(403);
         }
-        return view('dashboard.pages.masterData.akun.index');
     }
 
     /**
@@ -53,8 +58,12 @@ class AkunController extends Controller
      */
     public function create()
     {
-        $opd = Opd::orderBy('nama', 'asc')->get();
-        return view('dashboard.pages.masterData.akun.create', compact(['opd']));
+        if (Auth::user()->role == 'Admin') {
+            $opd = Opd::orderBy('nama', 'asc')->get();
+            return view('dashboard.pages.masterData.akun.create', compact(['opd']));
+        } else {
+            return abort(403);
+        }
     }
 
     /**
@@ -141,8 +150,12 @@ class AkunController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        //
+        $user = User::find($id);
+        $user->delete();
+        return response()->json([
+            'status' => 'success'
+        ]);
     }
 }
