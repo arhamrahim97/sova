@@ -7,10 +7,9 @@
 @push('style')
     <style>
         #nama_file {
-            border: 0px;
+            border: 1px solid grey;
             font-weight: bold;
             height: 23px;
-            padding-left: 5px;
             font-size: 15px;
         }
 
@@ -115,6 +114,7 @@
                                                 @php
                                                     $checked = '';
                                                     $disabled = '';
+                                                    $selectGroupButton = '';
                                                     $name = 'wilayah[]';
                                                     $wilayahMonitoring = \App\Models\WilayahMonitoring::where('monitoring_id', $monitoring->id)
                                                         ->where('desa_kelurahan_id', $item->id)
@@ -125,13 +125,15 @@
                                                         $checked = 'checked';
                                                         $disabled = 'disabled';
                                                         $name = '';
+                                                        $selectGroupButton = 'bg-success text-light border-success';
                                                     }
                                                 @endphp
                                                 <label class="selectgroup-item">
                                                     <input type="checkbox" name="{{ $name }}"
                                                         value="{{ $item->id }}" class="selectgroup-input"
                                                         {{ $checked }} {{ $disabled }}>
-                                                    <span class="selectgroup-button">{{ $item->nama }}</span>
+                                                    <span
+                                                        class="selectgroup-button {{ $selectGroupButton }}">{{ $item->nama }}</span>
                                                 </label>
                                             @endforeach
                                         </div>
@@ -210,6 +212,7 @@
     <script>
         var totalList = 1;
         var monitoring_id = "{{ $monitoring->id }}";
+        var tw = "{{ $tw }}";
 
         $(document).ready(function() {
             $('#monitoring').addClass('active');
@@ -282,6 +285,7 @@
 
             var formData = new FormData($(this)[0]);
             formData.append('monitoring_id', monitoring_id);
+            formData.append('tw', tw);
             $.ajax({
                 url: "{{ url('monitoring') }}",
                 type: "POST",
@@ -302,6 +306,13 @@
                     } else {
                         printErrorMsg(response.error);
                     }
+                },
+                error: function(response) {
+                    swal("Gagal", "Data Gagal Ditambahkan", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
                 },
                 cache: false,
                 contentType: false,

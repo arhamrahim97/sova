@@ -5,6 +5,7 @@ namespace App\Http\Controllers\dashboard\masterData\wilayah;
 use App\Http\Controllers\Controller;
 use App\Models\Kecamatan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -18,18 +19,22 @@ class KecamatanController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = Kecamatan::orderBy('created_at', 'asc')->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $actionBtn = '<a class="btn btn-primary btn-sm mr-1" href="' . url('master-data/desa-kelurahan/' . $row->id) . '"><i class="fas fa-eye"></i> Lihat</a><button id="btn-edit" class="btn btn-warning btn-sm mr-1" value="' . $row->id . '" ><i class="fas fa-edit"></i> Ubah</button><button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+        if (Auth::user()->role == 'Admin') {
+            if ($request->ajax()) {
+                $data = Kecamatan::orderBy('created_at', 'asc')->get();
+                return DataTables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('action', function ($row) {
+                        $actionBtn = '<a class="btn btn-primary btn-sm mr-1" href="' . url('master-data/desa-kelurahan/' . $row->id) . '"><i class="fas fa-eye"></i> Lihat</a><button id="btn-edit" class="btn btn-warning btn-sm mr-1" value="' . $row->id . '" ><i class="fas fa-edit"></i> Ubah</button><button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
+                        return $actionBtn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+            }
+            return view('dashboard.pages.masterData.wilayah.kecamatan.index');
+        } else {
+            return abort(403);
         }
-        return view('dashboard.pages.masterData.wilayah.kecamatan.index');
     }
 
     /**

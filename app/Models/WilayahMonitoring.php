@@ -12,4 +12,9 @@ class WilayahMonitoring extends Model
     use TraitUuid;
 
     protected $table = 'wilayah_monitoring';
+
+    public function desaKelurahan()
+    {
+        return $this->belongsTo(DesaKelurahan::class, 'desa_kelurahan_id');
+    }
 }
