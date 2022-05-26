@@ -29,7 +29,7 @@ class MonitoringController extends Controller
     {
         $tahunSekarang = Carbon::now()->year;
         // $bulanSekarang = Carbon::now()->month;
-        $bulanSekarang = 12;
+        $bulanSekarang = 4;
 
         if ($request->ajax()) {
             $data = Monitoring::with('riwayatMonitoring')->orderBy('created_at', 'asc')->get();
@@ -179,7 +179,7 @@ class MonitoringController extends Controller
         }
 
 
-        $tw = 4; //ganti nanti
+        $tw = 2; //ganti nanti
 
         $totalSeluruhDesa = DesaKelurahan::count();
 
