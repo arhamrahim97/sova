@@ -30,6 +30,7 @@ class MonitoringController extends Controller
     {
         $tahunSekarang = Carbon::now()->year;
         // $bulanSekarang = Carbon::now()->month;
+
         $bulanSekarang = 1;
 
         if ($request->ajax()) {
@@ -258,6 +259,7 @@ class MonitoringController extends Controller
         } else {
             $monitoring = Monitoring::find($request->monitoring_id);
         }
+
 
 
         $tw = $request->tw ?? 1; //ganti nanti
