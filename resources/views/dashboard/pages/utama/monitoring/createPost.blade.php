@@ -116,9 +116,9 @@
                                                     $disabled = '';
                                                     $selectGroupButton = '';
                                                     $name = 'wilayah[]';
-                                                    $wilayahMonitoring = \App\Models\WilayahMonitoring::where('monitoring_id', $monitoring->id)
-                                                        ->where('desa_kelurahan_id', $item->id)
-                                                        ->where('tw', '!=', $tw)
+                                                    $wilayahMonitoring = \App\Models\WilayahMonitoring::where('monitoring_id', "$monitoring->id")
+                                                        ->where('desa_kelurahan_id', "$item->id")
+                                                        ->where('tw', '!=', "$tw")
                                                         ->first();
 
                                                     if ($wilayahMonitoring) {

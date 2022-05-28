@@ -131,9 +131,9 @@
                                                     $disabled = '';
                                                     $selectGroupButton = '';
                                                     $name = 'wilayah[]';
-                                                    $wilayahMonitoring = \App\Models\WilayahMonitoring::where('monitoring_id', $monitoring->id)
-                                                        ->where('desa_kelurahan_id', $item->id)
-                                                        ->where('tw', '!=', $riwayatMonitoring->tw)
+                                                    $wilayahMonitoring = \App\Models\WilayahMonitoring::where('monitoring_id', "$monitoring->id")
+                                                        ->where('desa_kelurahan_id', "$item->id")
+                                                        ->where('tw', '!=', "$riwayatMonitoring->tw")
                                                         ->first();
 
                                                     if ($wilayahMonitoring) {
@@ -142,8 +142,8 @@
                                                         $name = '';
                                                         $selectGroupButton = 'bg-success text-light border-success';
                                                     } else {
-                                                        $wilayahMonitoring = \App\Models\WilayahMonitoring::where('monitoring_id', $monitoring->id)
-                                                            ->where('desa_kelurahan_id', $item->id)
+                                                        $wilayahMonitoring = \App\Models\WilayahMonitoring::where('monitoring_id', "$monitoring->id")
+                                                            ->where('desa_kelurahan_id', "$item->id")
                                                             // ->where('tw', '==', $riwayatMonitoring->tw)
                                                             ->whereIn('id', $wilayahMonitoringId)
                                                             ->first();
