@@ -35,7 +35,7 @@
     <div class="wrapper wrapper-login wrapper-login-full p-0">
         <div
             class="login-aside w-50 d-flex flex-column align-items-center justify-content-center text-center bg-primary-gradient">
-            <img src="{{ asset('assets/dashboard/img/logo_sigi.png') }}" alt="" class="img-fluid"
+            <img src="{{ asset('assets/dashboard') }}/img/logo_sigi.png" alt="" class="img-fluid"
                 width="80px">
             <p class="subtitle text-white op-7">Pemerintah Kabupaten Sigi</p>
             <hr>
