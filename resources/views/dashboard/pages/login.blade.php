@@ -35,7 +35,11 @@
     <div class="wrapper wrapper-login wrapper-login-full p-0">
         <div
             class="login-aside w-50 d-flex flex-column align-items-center justify-content-center text-center bg-primary-gradient">
-            <h1 class="title fw-bold text-white mb-3">SMAS</h1>
+            <img src="{{ asset('assets/dashboard/img/logo_sigi.png') }}" alt="" class="img-fluid"
+                width="80px">
+            <p class="subtitle text-white op-7">Pemerintah Kabupaten Sigi</p>
+            <hr>
+            <h1 class="title fw-bold text-white mb-0">SMAS</h1>
             <p class="subtitle text-white op-7">Smart Monitoring Intervensi Stunting</p>
         </div>
         <div class="login-aside w-50 d-flex align-items-center justify-content-center bg-white">
