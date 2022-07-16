@@ -34,7 +34,7 @@ class MonitoringController extends Controller
         $bulanSekarang = 1;
 
         if ($request->ajax()) {
-            $data = Monitoring::with('riwayatMonitoring')->orderBy('created_at', 'asc')->get();
+            $data = Monitoring::with('riwayatMonitoring')->orderBy('created_at', 'desc')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('indikator', function ($row) {
