@@ -29,18 +29,29 @@
     <!-- CSS Files -->
     <link rel="stylesheet" href="{{ asset('assets/dashboard') }}/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('assets/dashboard') }}/css/atlantis.css">
+    <style>
+        hr {
+            width: 80%;
+            height: 2px;
+            margin-bottom: 7px;
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: 9px;
+            border-width: 2px;
+            border-color: rgb(255, 255, 255);
+        }
+    </style>
 </head>
 
 <body class="login">
     <div class="wrapper wrapper-login wrapper-login-full p-0">
         <div
             class="login-aside w-50 d-flex flex-column align-items-center justify-content-center text-center bg-primary-gradient">
-            <img src="{{ asset('assets/dashboard') }}/img/logo_sigi.png" alt="" class="img-fluid"
-                width="80px">
-            <p class="subtitle text-white op-7">Pemerintah Kabupaten Sigi</p>
+            <img src="{{ asset('assets/dashboard') }}/img/sigi_header.png" alt="" class="img-fluid"
+                width="400px">
             <hr>
-            <h1 class="title fw-bold text-white mb-0">SMAS</h1>
-            <p class="subtitle text-white op-7">Smart Monitoring Intervensi Stunting</p>
+            <h1 class="title fw-bold text-white mb-0" style="font-size: 100px">SMAS</h1>
+            <h3 class="text-white fw-bold op-7">Smart Monitoring Intervensi Stunting</h3>
         </div>
         <div class="login-aside w-50 d-flex align-items-center justify-content-center bg-white">
             <form action="{{ url('/login') }}" method="POST">
