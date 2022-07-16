@@ -50,7 +50,7 @@
             <img src="{{ asset('assets/dashboard') }}/img/sigi_header.png" alt="" class="img-fluid"
                 width="400px">
             <hr>
-            <h1 class="title fw-bold text-white mb-0" style="font-size: 100px">SMAS</h1>
+            <h1 class="title fw-bold text-white mb-0" style="font-size: 70px">SMAS - Stunting</h1>
             <h3 class="text-white fw-bold op-7">Smart Monitoring Intervensi Stunting</h3>
         </div>
         <div class="login-aside w-50 d-flex align-items-center justify-content-center bg-white">
